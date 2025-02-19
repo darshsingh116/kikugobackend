@@ -21,7 +21,8 @@ def ytcaption():
         # Fetch Japanese subtitles
         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['ja'])
         return transcript
-    except (TranscriptsDisabled, NoTranscriptFound):
+    except Exception as e:
+        print(e,flush=True)
         return {"error": "Japanese subtitles not available for this video."}
 
 if __name__ == '__main__':
