@@ -15,7 +15,9 @@ async def get_japanese_subtitles(video_id):
         # Fetch Japanese subtitles
         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['ja'])
         return transcript
-    except (TranscriptsDisabled, NoTranscriptFound):
+    except Exception as e:
+        print(f"Error: {e}")
+    
         return {"error": "Japanese subtitles not available for this video."}
 
 async def translate_word_with_retry(word, cache, max_retries=3):
