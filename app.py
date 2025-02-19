@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Import CORS
 import gemini
-import vocab_selection
 from nlp import extract_japanese_content
-import ytCaptions
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes and origins
@@ -99,37 +97,6 @@ def respond():
         "history": updated_history,
         "totalScoreIncremented": totalScoreIncremented
     })
-
-@app.route('/vocab/all', methods=['GET'])
-def get_all_user_vocab():
-    """
-    API endpoint to return all vocabulary data.
-    """
-    try:
-        vocab_data = vocab_selection.get_all_vocab_data()
-        return jsonify(vocab_data), 200
-    except FileNotFoundError as e:
-        return jsonify({"error": str(e)}), 404
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/get-subtitles', methods=['GET'])
-async def get_subtitles():
-    print("Request received")
-    video_id = request.args.get('video_id')
-    if not video_id:
-        return jsonify({"error": "Please provide a video_id parameter."}), 400
-    try:
-        # Get processed subtitles asynchronously
-        subtitles_data = await ytCaptions.get_processed_subtitles(video_id)
-        
-        # Return data as JSON
-        if "error" in subtitles_data:
-            return jsonify(subtitles_data), 404
-        return jsonify(subtitles_data)
-    except Exception as e:
-        print(str(e))
-        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
