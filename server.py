@@ -21,9 +21,15 @@ def ytcaption():
         # Fetch Japanese subtitles
         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['ja'])
         return transcript
+    except TranscriptsDisabled as e:
+        print(f"TranscriptsDisabled: {e}", flush=True)
+        return jsonify({"error": "Subtitles are disabled for this video."}), 400
+    except NoTranscriptFound as e:
+        print(f"NoTranscriptFound: {e}", flush=True)
+        return jsonify({"error": "Japanese subtitles not found for this video."}), 404
     except Exception as e:
-        print(e,flush=True)
-        return {"error": "Japanese subtitles not available for this video."}
+        print(f"Unexpected error: {e}", flush=True)
+        return jsonify({"error": "An unexpected error occurred while fetching subtitles."}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
